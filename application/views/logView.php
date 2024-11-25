@@ -1,0 +1,129 @@
+<div class="container mt-2">
+    <h1 class="text-center">Log Records of Classroom Attendance Portal</h1>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-12">
+                    <div class="card-header">
+                        <h5 class="card-title">Filter</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="<?php echo site_url('log'); ?>" method="POST">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="user_id">Select User Account</label>
+                                    <select name="user_id" id="user_id" class="form-control">
+                                        <option value="all" <?php echo ($userid == 'all') ? 'selected' : '';?>>All User</option>
+                                        <?php foreach ($users as $user): ?>
+                                            <option value="<?php echo $user['Acc_ID']; ?>" <?php echo ($userid == $user['Acc_ID']) ? 'selected' : ''; ?>>
+                                                <?php echo $user['User_ID']; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="logtype">Select Log Type</label>
+                                    <select name="logtype" id="logtype" class="form-control">
+                                        <option value="all" <?php echo ($logtype == 'all') ? 'selected' : '' ; ?>>All Log Type</option>
+                                        <option value="info" <?php echo ($logtype == 'info') ? 'selected' : '' ; ?>>Info</option>
+                                        <option value="error" <?php echo ($logtype == 'error') ? 'selected' : '' ; ?>>Error</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="start_date">Start Date</label>
+                                    <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo htmlspecialchars($startDate)?>">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="end_date">End Date</label>
+                                    <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo htmlspecialchars($endDate)?>" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filter Log</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Current Filter</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Target User Account:</strong>
+                        <?php echo ($userid === 'all') ? 'All User Accounts' : htmlspecialchars($UseridName) ; ?>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Log Type:</strong>
+                        <?php echo ($logtype === 'all') ? 'All Log Type' : htmlspecialchars($logtype) ; ?>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Start Date:</strong>
+                        <?php echo $startDate ? htmlspecialchars($startDate) : 'All Past Dates' ; ?>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>End Date:</strong>
+                        <?php echo $endDate ? htmlspecialchars($endDate) : 'Today' ; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Log Records</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Date Time</th>
+                            <th>Type</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody">
+                        <?php if (!empty($logging)):?>
+                            <?php foreach ($logging as $log): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($log['User_ID'])?></td>
+                                    <td><?php echo htmlspecialchars($log['AcLog_DateTime'])?></td>
+                                    <td><?php echo htmlspecialchars($log['AcLog_Type'])?></td>
+                                    <td><?php echo htmlspecialchars($log['AcLog_Comment'])?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4">No logs found.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start_date').setAttribute('max', today);
+        document.getElementById('end_date').setAttribute('max', today);
+
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+
+        function validateDates() {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            if (startDate && endDate && endDate < startDate) {
+                alert("End date cannot be earlier than start date.");
+                startDateInput.value = '';
+            }
+        }
+
+        startDateInput.addEventListener('change', validateDates);
+        endDateInput.addEventListener('change', validateDates);
+    });
+</script>
