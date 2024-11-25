@@ -97,7 +97,7 @@
                                 <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="4">No logs found.</td>
+                                <td colspan="4" style="text-align: center;">No logs found.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
