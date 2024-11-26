@@ -9,14 +9,15 @@
             <?php echo htmlspecialchars($message['text']); ?>
         </div>
     <?php endif; ?>
+    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by name, ID, or contact number">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Gender</th>
-                <th>Contact Number</th>
+                <th onclick="sortTable(0)">ID</th>
+                <th onclick="sortTable(1)">Name</th>
+                <th onclick="sortTable(2)">Age</th>
+                <th onclick="sortTable(3)">Gender</th>
+                <th onclick="sortTable(4)">Contact Number</th>
                 <?php if (!$teacher_id): ?>
                 <th>Actions</th>
                 <?php endif; ?>
@@ -25,6 +26,10 @@
         <tbody id="studentTableBody">
         </tbody>
     </table>
+
+    <nav aria-label="Page navigation">
+        <ul id="paginationControls" class="pagination justify-content-center"></ul>
+    </nav>
 </div>
 
 <script>
@@ -86,6 +91,58 @@ document.addEventListener('DOMContentLoaded', function() {
         });}
     }
 
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+        const paginationContainer = document.getElementById('paginationControls');
+        paginationContainer.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+            const pageItem = document.createElement('li');
+            pageItem.className = 'page-item'
+            pageItem.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+            paginationContainer.appendChild(pageItem);
+        }
+    }
+
+    document.getElementById('click', function(event) {
+        if (event.target.matches('.page-link')) {
+            event.preventDefault();
+            currentPage = parseInt(event.target.getAttribute('data-page'), 10);
+            renderTable(currentPage);
+        }
+    })
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        filteredData = allData.filter(student => 
+            student.Student_ID.toLowerCase().includes(searchTerm) ||
+            student.Student_Name.toLowerCase().includes(searchTerm) ||
+            student.Student_Contact.toLowerCase().includes(searchTerm)
+        );
+        currentPage = 1;
+        renderTable(currentPage);
+        renderPagination(filteredData.length);
+    })
+
     fetchData();
-})
+});
+
+function sortTable(columnIndex) {
+    const table = document.querySelector('.table');
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+    const isAscending = table.querySelectorAll('thead th')[columnIndex].classList.toggle('asc');
+    const compare = (a,b) => {
+        const aText = a.children[columnIndex].textContent.trim();
+        const bText = b.children[columnIndex].textContent.trim();
+        if (columnIndex === 5) {
+            const aDate = new Date(aText);
+            const bDate = new Date(bText);
+            return isAscending ? aDate - bDate : bDate - aDate;
+        } else {
+            return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        }
+    };
+    rows.sort(compare);
+    table.querySelector('tbody').append(...rows);
+}
+
 </script>

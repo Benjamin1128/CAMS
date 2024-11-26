@@ -15,14 +15,15 @@
             <?php echo htmlspecialchars($message['text']); ?>
         </div>
     <?php endif; ?>
+    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by class name or attendance status...">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Class Name</th>
-                <th>Responsible Teacher</th>
-                <th>Class Begin Time</th>
-                <th>Class End Time</th>
-                <th>Attendance Status</th>
+                <th onclick="sortTable(0)">Class Name</th>
+                <th onclick="sortTable(1)">Responsible Teacher</th>
+                <th onclick="sortTable(2)">Class Begin Time</th>
+                <th onclick="sortTable(3)">Class End Time</th>
+                <th onclick="sortTable(4)">Attendance Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -98,6 +99,50 @@
         document.getElementById('attendance_date').textContent = formattedDate;
     });
 
+    document.getElementById('searchInput').addEventListener('input', function() {
+        var searchTerm = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#attendanceList tr')
+
+        rows.forEach(function(row) {
+            var cells = row.getElementsByTagName('td');
+            var id = cells[0].textContent.toLowerCase();
+            var name = cells[1].textContent.toLowerCase();
+
+
+            if (id.includes(searchTerm) || name.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    function sortTable(columnIndex) {
+        const table = document.querySelector('.table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        const isAscending = table.querySelectorAll('thead th')[columnIndex].classList.toggle('asc');
+        const parseTime = (timeText => {
+            const [time, modifier] = timeText.split(' ');
+            let [hours, minutes] = time.split(':').map(Number);
+            if (modifier === 'PM' && hours < 12) hours += 12;
+            if (modifier === 'AM' && hours === 12) hours = 0;
+            return hours * 60 + minutes;
+        })
+        const compare = (a,b) => {
+            const aText = a.children[columnIndex].textContent.trim();
+            const bText = b.children[columnIndex].textContent.trim();
+            if (columnIndex === 5) {
+                const aTime = parseTime(aText);
+                const bTime = parseTime(bText);
+                return isAscending ? aTime - bTime : bTime - aTime;
+            } else {
+                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            }
+        };
+        rows.sort(compare);
+        table.querySelector('tbody').append(...rows);
+    }
+
     function updateTime() {
         const now = new Date();
         let hours = now.getHours();
@@ -111,4 +156,6 @@
     }
     updateTime();
     setInterval(updateTime, 1000);
+
+
 </script>

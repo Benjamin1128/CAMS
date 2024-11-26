@@ -13,12 +13,13 @@
             <?php echo htmlspecialchars($message['text']); ?>
         </div>
     <?php endif; ?>
+    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by class name or attendance status...">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Class Name</th>
-                <th>Responsible Teacher</th>
-                <th>Attendance Status</th>
+                <th onclick="sortTable(0)">Class Name</th>
+                <th onclick="sortTable(1)">Responsible Teacher</th>
+                <th onclick="sortTable(2)">Attendance Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -53,17 +54,41 @@
         document.getElementById('attendance_date').textContent = formattedDate;
     });
 
-    function updateTime() {
-        const now = new Date();
-        let hours = now.getHours();
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const period = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12;
-			const timeString = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${period}`;
-			document.getElementById('attendance_time').textContent = timeString;
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+        var searchTerm = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#attendanceList tr')
+
+        rows.forEach(function(row) {
+            var cells = row.getElementsByTagName('td');
+            var id = cells[0].textContent.toLowerCase();
+            var name = cells[1].textContent.toLowerCase();
+
+
+            if (id.includes(searchTerm) || name.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    function sortTable(columnIndex) {
+        const table = document.querySelector('.table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        const isAscending = table.querySelectorAll('thead th')[columnIndex].classList.toggle('asc');
+        const compare = (a,b) => {
+            const aText = a.children[columnIndex].textContent.trim();
+            const bText = b.children[columnIndex].textContent.trim();
+            if (columnIndex === 5) {
+                const aDate = new Date(aText);
+                const bDate = new Date(bText);
+                return isAscending ? aDate - bDate : bDate - aDate;
+            } else {
+                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            }
+        };
+        rows.sort(compare);
+        table.querySelector('tbody').append(...rows);
     }
-    updateTime();
-    setInterval(updateTime, 1000);
 </script>

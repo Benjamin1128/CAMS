@@ -9,18 +9,22 @@
             <?php echo htmlspecialchars($message['text']); ?>
         </div>
     <?php endif; ?>
+    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by name, ID, or contact number">
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Class Name</th>
-                <th>Responsible Teacher</th>
-                <th>Total Student</th>
-                <th>Actions</th>
+                <th onclick="sortTable(0)">Class Name</th>
+                <th onclick="sortTable(1)">Responsible Teacher</th>
+                <th onclick="sortTable(2)">Total Student</th>
+                <th onclick="sortTable(3)">Actions</th>
             </tr>
         </thead>
         <tbody id="classroomTableBody">
         </tbody>
     </table>
+    <nav aria-label="Page navigation">
+        <ul id="paginationControls" class="pagination justify-content-center"></ul>
+    </nav>
 </div>
 
 <script>
@@ -80,6 +84,56 @@ document.addEventListener('DOMContentLoaded', function() {
         });}
     }
 
-    fetchData();
-})
+    function renderPagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+        const paginationContainer = document.getElementById('paginationControls');
+            paginationContainer.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const pageItem = document.createElement('li');
+                pageItem.className = 'page-item'
+                pageItem.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+                paginationContainer.appendChild(pageItem);
+            }
+        }
+
+        document.getElementById('click', function(event) {
+            if (event.target.matches('.page-link')) {
+                event.preventDefault();
+                currentPage = parseInt(event.target.getAttribute('data-page'), 10);
+                renderTable(currentPage);
+            }
+        })
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            filteredData = allData.filter(classroom => 
+                classroom.Class_Subject.toLowerCase().includes(searchTerm) ||
+                classroom.Teacher_Name.toLowerCase().includes(searchTerm) 
+            );
+            currentPage = 1;
+            renderTable(currentPage);
+            renderPagination(filteredData.length);
+        })
+
+        fetchData();
+});
+
+function sortTable(columnIndex) {
+    const table = document.querySelector('.table');
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+    const isAscending = table.querySelectorAll('thead th')[columnIndex].classList.toggle('asc');
+    const compare = (a,b) => {
+        const aText = a.children[columnIndex].textContent.trim();
+        const bText = b.children[columnIndex].textContent.trim();
+        if (columnIndex === 3) {
+            const aDate = new Date(aText);
+            const bDate = new Date(bText);
+            return isAscending ? aDate - bDate : bDate - aDate;
+        } else {
+            return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        }
+    };
+    rows.sort(compare);
+    table.querySelector('tbody').append(...rows);
+}
 </script>

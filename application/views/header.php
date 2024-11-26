@@ -120,6 +120,31 @@
       align-items: center;
       text-align: center;
     }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      padding-left: 0;
+      list-style: none;
+    }
+    .page-item {
+      margin: 0 2px;
+    }
+    .page-link {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      margin: 0;
+      line-height: 1.25;
+      text-align: center;
+      text-decoration: none;
+      background-color: #fff;
+      border: 1px solid #dee2d6;
+      color: #007bff;
+    }
+    .page-link {
+      background-color: #007bff;
+      border-color: #007bff;
+      color: #fff;
+    }
   </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">

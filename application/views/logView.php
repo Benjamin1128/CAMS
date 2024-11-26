@@ -76,13 +76,14 @@
                 <h3 class="card-title">Log Records</h3>
             </div>
             <div class="card-body">
+            <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by name, ID, or contact number">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Username</th>
-                            <th>Date Time</th>
-                            <th>Type</th>
-                            <th>Message</th>
+                            <th onclick="sortTable(0)">Username</th>
+                            <th onclick="sortTable(1)">Date Time</th>
+                            <th onclick="sortTable(2)">Type</th>
+                            <th onclick="sortTable(3)">Message</th>
                         </tr>
                     </thead>
                     <tbody id="logTableBody">
@@ -126,4 +127,42 @@
         startDateInput.addEventListener('change', validateDates);
         endDateInput.addEventListener('change', validateDates);
     });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+            var searchTerm = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#logTableBody tr')
+
+            rows.forEach(function(row) {
+                var cells = row.getElementsByTagName('td');
+                var id = cells[0].textContent.toLowerCase();
+                var name = cells[1].textContent.toLowerCase();
+                var contact = cells[2].textContent.toLowerCase();
+                var info = cells[3].textContent.toLowerCase();
+
+                if (id.includes(searchTerm) || name.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+    });
+
+    function sortTable(columnIndex) {
+        const table = document.querySelector('.table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        const isAscending = table.querySelectorAll('thead th')[columnIndex].classList.toggle('asc');
+        const compare = (a,b) => {
+            const aText = a.children[columnIndex].textContent.trim();
+            const bText = b.children[columnIndex].textContent.trim();
+            if (columnIndex === 1) {
+                const aDate = new Date(aText);
+                const bDate = new Date(bText);
+                return isAscending ? aDate - bDate : bDate - aDate;
+            } else {
+                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            }
+        };
+        rows.sort(compare);
+        table.querySelector('tbody').append(...rows);
+    }
 </script>

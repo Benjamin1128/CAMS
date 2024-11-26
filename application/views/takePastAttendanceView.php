@@ -30,10 +30,10 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Contact</th>
-                <th>Attendance Status</th>
+                <th onclick="sortTable(0)">ID</th>
+                <th onclick="sortTable(1)">Name</th>
+                <th onclick="sortTable(2)">Contact</th>
+                <th onclick="sortTable(3)">Attendance Status</th>
                 <th>Actions </th>
             </tr>
         </thead>
@@ -60,9 +60,9 @@
                             </span>
                         </td>
                         <td>
-                            <a href="http://localhost/CAMS/index.php/insertPasAttendance/<?php echo htmlspecialchars($pastDate)?>/Present/<?php echo urlencode($attendance['Course_ID'])?>/<?php echo ($classId); ?>"  class="btn btn-success">Present</a>
-                            <a href="http://localhost/CAMS/index.php/insertPastAttendance/<?php echo htmlspecialchars($pastDate)?>/Late/<?php echo urlencode($attendance['Course_ID']); ?>/<?php echo ($classId); ?>"  class="btn btn-warning">Late</a>
-                            <a href="http://localhost/CAMS/index.php/insertPastAttendance/<?php echo htmlspecialchars($pastDate)?>/Absent/<?php echo urlencode($attendance['Course_ID']); ?>/<?php echo ($classId); ?>"  class="btn btn-danger">Absent</a>
+                            <a href="http://localhost/CAMS/index.php/insertPastAttendance/<?php echo htmlspecialchars($pastDate)?>/Present/<?php echo urlencode($attendance['Course_ID']); ?>/<?php echo htmlspecialchars ($classId); ?>"  class="btn btn-success">Present</a>
+                            <a href="http://localhost/CAMS/index.php/insertPastAttendance/<?php echo htmlspecialchars($pastDate)?>/Late/<?php echo urlencode($attendance['Course_ID']); ?>/<?php echo htmlspecialchars ($classId); ?>"  class="btn btn-warning">Late</a>
+                            <a href="http://localhost/CAMS/index.php/insertPastAttendance/<?php echo htmlspecialchars($pastDate)?>/Absent/<?php echo urlencode($attendance['Course_ID']); ?>/<?php echo htmlspecialchars ($classId); ?>"  class="btn btn-danger">Absent</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -76,5 +76,22 @@
 </div>
 
 <script>
-
+    function sortTable(columnIndex) {
+        const table = document.querySelector('.table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        const isAscending = table.querySelectorAll('thead th')[columnIndex].classList.toggle('asc');
+        const compare = (a,b) => {
+            const aText = a.children[columnIndex].textContent.trim();
+            const bText = b.children[columnIndex].textContent.trim();
+            if (columnIndex === 5) {
+                const aDate = new Date(aText);
+                const bDate = new Date(bText);
+                return isAscending ? aDate - bDate : bDate - aDate;
+            } else {
+                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            }
+        };
+        rows.sort(compare);
+        table.querySelector('tbody').append(...rows);
+    }
 </script>
