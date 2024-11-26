@@ -69,9 +69,16 @@ class StudentModel extends CI_Model
     }
     public function getAllStudents()
     {
+        $teacherId = $this->session->userdata('teacher_id');
         $this->db->distinct();
         $this->db->select('s.*');
         $this->db->from('student s');
+        if ($teacherId !== null) {
+            $this->db->join('course c', 's.Student_ID = c.Student_ID', 'left');
+            $this->db->join('classroom l', 'c.Class_ID = l.Class_ID', 'left');
+            $this->db->where('l.Teacher_ID', $teacherId);
+            $this->db->where('c.Subject_Status', 'A');
+        }
 
         $query = $this->db->get();
         $students = $query->result_array();
