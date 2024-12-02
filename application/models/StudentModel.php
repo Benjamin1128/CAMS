@@ -42,6 +42,65 @@ class StudentModel extends CI_Model
             }
         }
     }
+
+    public function getStudents($start, $length, $search = null, $order_column = 0, $order_dir = 'asc')
+    {
+        $teacherId = $this->session->userdata('teacher_id');
+
+        $columns = [
+            'Student_ID',
+            'Student_Name',
+            'Student_Age',
+            'Student_Gender',
+            'Student_Contact'
+        ];
+        // Build query with optional search
+        $this->db->select('s.*');
+        $this->db->from('student s');
+
+        if ($teacherId !== null) {
+            $this->db->join('course c', 's.Student_ID = c.Student_ID', 'left');
+            $this->db->join('classroom l', 'c.Class_ID = l.Class_ID', 'left');
+            $this->db->where('l.Teacher_ID', $teacherId);
+            $this->db->where('c.Subject_Status', 'A');
+        }
+
+        if ($search) {
+            $this->db->like('s.Student_Name', $search);
+            $this->db->or_like('s.Student_ID', $search);
+        }
+
+        $this->db->order_by($columns[$order_column], $order_dir);
+
+        $this->db->limit($length, $start);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function getFilteredStudentsCount($search = null)
+    {
+        $teacherId = $this->session->userdata('teacher_id');
+
+        $this->db->select('COUNT(DISTINCT s.Student_ID) as total');
+        $this->db->from('student s');
+
+        if ($teacherId !== null) {
+            $this->db->join('course c', 's.Student_ID = c.Student_ID', 'left');
+            $this->db->join('classroom l', 'c.Class_ID = l.Class_ID', 'left');
+            $this->db->where('l.Teacher_ID', $teacherId);
+            $this->db->where('c.Subject_Status', 'A');
+        }
+
+        if ($search) {
+            $this->db->like('s.Student_Name', $search);
+            $this->db->or_like('s.Student_ID', $search);
+        }
+
+        $query = $this->db->get();
+        $row = $query->row_array();
+        return $row['total'];
+    }
+
     public function getTotalStudents()
     {
         $teacherId = $this->session->userdata('teacher_id');

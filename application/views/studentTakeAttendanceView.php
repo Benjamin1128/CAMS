@@ -15,6 +15,9 @@
             <?php echo htmlspecialchars($message['text']); ?>
         </div>
     <?php endif; ?>
+
+    
+
     <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by class name or attendance status...">
     <table class="table table-striped">
         <thead>

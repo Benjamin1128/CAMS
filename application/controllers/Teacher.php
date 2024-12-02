@@ -11,27 +11,62 @@ class Teacher extends CI_Controller
         $this->load->model('ProfileModel');
         $this->load->model('LogModel');
     }
-    public function index() 
+    public function index()
     {
-        $data['user_id'] = $this->session->userdata('user_id');
-        $data['student_id'] = $this->session->userdata('student_id');
-        $data['teacher_id'] = $this->session->userdata('teacher_id');
-        $data['active_page'] = 'teacher';
-        $teachers = $this->TeacherModel->getAllTeachers();
-        $totalTeachers = $this->TeacherModel->getTotalTeachers();
-        $totalPages = ceil($totalTeachers / 10);
-        if (isset($_GET['ajax'])) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'teachers' => $teachers,
-                'totalPages' => $totalPages,
-            ]);
+        if ($this->input->get('ajax')) {
+            // Get parameters from DataTables
+            $draw = intval($this->input->get('draw'));
+            $start = intval($this->input->get('start')); // Starting row index
+            $length = intval($this->input->get('length')); // Number of rows per page
+            $search = $this->input->get('search')['value']; // Search query
+            $order_column = $this->input->get('order_column'); // Column index
+            $order_dir = $this->input->get('order_dir'); // Sorting direction (asc or desc)
+
+            $teachers = $this->TeacherModel->getTeachers($start, $length, $search, $order_column, $order_dir);
+            $totalFiltered = $this->TeacherModel->getFilteredTeachersCount($search); // Count of filtered rows
+            $totalTeachers = $this->TeacherModel->getTotalTeachers();
+
+            $response = [
+                'draw' => $draw,
+                'recordsTotal' => $totalTeachers,
+                'recordsFiltered' => $totalFiltered,
+                'data' => $teachers,
+            ];
+
+            echo json_encode($response);
             exit;
         }
+
+        $data['user_id'] = $this->session->userdata('user_id');
+        $data['teacher_id'] = $this->session->userdata('teacher_id');
+        $data['student_id'] = $this->session->userdata('student_id');
+        $data['active_page'] = 'teacher';
+
         $this->load->view('header', $data);
         $this->load->view('teacherView');
         $this->load->view('footer');
     }
+    // public function index() 
+    // {
+    //     $data['user_id'] = $this->session->userdata('user_id');
+    //     $data['student_id'] = $this->session->userdata('student_id');
+    //     $data['teacher_id'] = $this->session->userdata('teacher_id');
+    //     $data['active_page'] = 'teacher';
+    //     $teachers = $this->TeacherModel->getAllTeachers();
+    //     $totalTeachers = $this->TeacherModel->getTotalTeachers();
+    //     $totalPages = ceil($totalTeachers / 10);
+    //     if (isset($_GET['ajax'])) {
+    //         header('Content-Type: application/json');
+    //         echo json_encode([
+    //             'teachers' => $teachers,
+    //             'totalPages' => $totalPages,
+    //         ]);
+    //         exit;
+    //     }
+    //     $this->load->view('header', $data);
+    //     $this->load->view('teacherView');
+    //     $this->load->view('footer');
+    // }
 
     public function newTeacher()
     {

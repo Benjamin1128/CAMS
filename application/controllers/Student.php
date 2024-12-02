@@ -14,21 +14,35 @@ class Student extends CI_Controller
     }
     public function index()
     {
+        if ($this->input->get('ajax')) {
+            // Get parameters from DataTables
+            $draw = intval($this->input->get('draw'));
+            $start = intval($this->input->get('start')); // Starting row index
+            $length = intval($this->input->get('length')); // Number of rows per page
+            $search = $this->input->get('search')['value']; // Search query
+            $order_column = $this->input->get('order_column'); // Column index
+            $order_dir = $this->input->get('order_dir'); // Sorting direction (asc or desc)
+
+            $students = $this->StudentModel->getStudents($start, $length, $search, $order_column, $order_dir);
+            $totalFiltered = $this->StudentModel->getFilteredStudentsCount($search); // Count of filtered rows
+            $totalStudents = $this->StudentModel->getTotalStudents();
+
+            $response = [
+                'draw' => $draw,
+                'recordsTotal' => $totalStudents,
+                'recordsFiltered' => $totalFiltered,
+                'data' => $students,
+            ];
+
+            echo json_encode($response);
+            exit;
+        }
+
         $data['user_id'] = $this->session->userdata('user_id');
-        $data['student_id'] = $this->session->userdata('student_id');
         $data['teacher_id'] = $this->session->userdata('teacher_id');
+        $data['student_id'] = $this->session->userdata('student_id');
         $data['active_page'] = 'student';
-		$students = $this->StudentModel->getAllStudents();
-		$totalStudents = $this->StudentModel->getTotalStudents();
-		$totalPages = ceil($totalStudents / 10);	
-		if (isset($_GET['ajax'])) {
-			header('Content-Type: application/json');
-			echo json_encode([
-				'students' => $students,
-				'totalPages' => $totalPages,
-			]);
-			exit;
-		}
+
         $this->load->view('header', $data);
         $this->load->view('studentView');
         $this->load->view('footer');

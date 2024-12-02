@@ -6,6 +6,79 @@ class TeacherModel extends CI_Model
         parent::__construct();
     }
 
+    public function getTeachers($start, $length, $search = null, $order_column = 0, $order_dir = 'asc')
+    {
+        $columns = [
+            't.Teacher_ID',
+            't.Teacher_Name',
+            't.Teacher_Age',
+            't.Teacher_Gender',
+            't.Teacher_Contact',
+            't.Salary',
+            'NumberOfClasses'
+        ];
+
+        $this->db->select('
+            t.Teacher_ID,
+            t.Teacher_Name,
+            t.Teacher_Age,
+            t.Teacher_Gender,
+            t.Teacher_Contact,
+            t.Salary,
+            COUNT(c.Class_ID) AS NumberOfClasses
+        ');
+        $this->db->from('teacher t');
+        $this->db->join('classroom c', 't.Teacher_ID = c.Teacher_ID', 'left');
+        $this->db->group_by([
+            't.Teacher_ID',
+            't.Teacher_Name',
+            't.Teacher_Age',
+            't.Teacher_Gender',
+            't.Teacher_Contact',
+            't.Salary'
+        ]);
+
+        // Add search functionality
+        if ($search) {
+            $this->db->group_start(); // Start grouping for OR condition
+            $this->db->like('t.Teacher_Name', $search);
+            $this->db->or_like('t.Teacher_ID', $search);
+            $this->db->or_like('t.Teacher_Contact', $search);
+            $this->db->group_end();
+        }
+
+        // Add ordering
+        $this->db->order_by($columns[$order_column], $order_dir);
+
+        // Add pagination
+        $this->db->limit($length, $start);
+
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+
+    public function getFilteredTeachersCount($search = null)
+    {
+        $this->db->select('COUNT(DISTINCT t.Teacher_ID) as total');
+        $this->db->from('teacher t');
+        $this->db->join('classroom c', 't.Teacher_ID = c.Teacher_ID', 'left');
+
+        // Add search functionality
+        if ($search) {
+            $this->db->group_start(); // Start grouping for OR condition
+            $this->db->like('t.Teacher_Name', $search);
+            $this->db->or_like('t.Teacher_ID', $search);
+            $this->db->or_like('t.Teacher_Contact', $search);
+            $this->db->group_end();
+        }
+
+        $query = $this->db->get();
+        $row = $query->row_array();
+        return $row['total'];
+    }
+
+
     public function getTeacherById($teacherID) 
     {
         $this->db->select('*');
