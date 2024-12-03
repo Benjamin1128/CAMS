@@ -53,8 +53,8 @@ class LogModel extends CI_Model
             $this->db->where('acl.AcLog_Type', $logtype);
         }
         if ($startDate !== null && $endDate !== null) {
-            $startDate .= '00:00:00';
-            $endDate .= '23:59:59';
+            // $startDate .= '00:00:00';
+            // $endDate .= '23:59:59';
             $this->db->where('acl.AcLog_DateTime >=', $startDate);
             $this->db->where('acl.AcLog_DateTime <=', $endDate);
         }
