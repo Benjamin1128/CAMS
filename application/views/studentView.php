@@ -1,4 +1,4 @@
-<div class="container mt-2">
+<div class="container pt-2">
     <h1>Student List</h1>
     <?php if ($this->session->flashdata('message')) : ?>
         <?php
@@ -69,7 +69,7 @@ $('#studentTable').DataTable({
             render: function(data, type, row) {
                 return `
                     <a href="http://localhost/CAMS/index.php/editStudent/${row.Student_ID}" class="btn btn-success">Edit</a>
-                    <a href="http://localhost/CAMS/index.php/removeStudent/${row.Student_ID}" class="btn btn-danger">Delete</a>
+                    <a href="http://localhost/CAMS/index.php/removeStudent/${row.Student_ID}" onclick="return confirm('Are you sure you want to delete this student?')" class="btn btn-danger">Delete</a>
                 `;
             }
         }

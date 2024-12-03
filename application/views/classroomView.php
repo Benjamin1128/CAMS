@@ -1,4 +1,4 @@
-<div class="container mt-2">
+<div class="container pt-2">
     <h1>Classroom Management</h1>
     <?php if ($this->session->flashdata('message')) : ?>
         <?php
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>
                     <a href="http://localhost/CAMS/index.php/editClassroom/${classroom.Class_ID}" class="btn btn-success">Edit</a>
                     <?php if (!$teacher_id): ?>
-                    <a href="http://localhost/CAMS/index.php/removeClassroom/${classroom.Class_ID}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
+                    <a href="http://localhost/CAMS/index.php/removeClassroom/${classroom.Class_ID}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this classroom?')">Delete</a>
                     <?php endif; ?>
                 </td>
             `;

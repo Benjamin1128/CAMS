@@ -1,5 +1,5 @@
-    <div class="container">
-        <h1 class="text-center mt-2">Classroom Attendance Management System</h1>
+    <div class="container pt-2">
+        <h1 class="text-center">Classroom Attendance Management System</h1>
         <div class="container-fluid">
             <div class="row">
                 <!-- Total Students Card -->

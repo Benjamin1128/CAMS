@@ -1,4 +1,4 @@
-<div class="container mt-2">
+<div class="container pt-2">
     <h1 class="text-center">Log Records of Classroom Attendance Management System</h1>
     <div class="container-fluid">
         <div class="row">

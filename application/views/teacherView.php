@@ -1,4 +1,4 @@
-<div class="container mt-2">
+<div class="container pt-2">
     <h1>Teacher List</h1>
     <?php if ($this->session->flashdata('message')) : ?>
         <?php
@@ -69,7 +69,7 @@
             render: function(data, type, row) {
                 return `
                     <a href="http://localhost/CAMS/index.php/editTeacher/${row.Teacher_ID}" class="btn btn-warning">Raise</a>
-                    <a href="http://localhost/CAMS/index.php/removeTeacher/${row.Teacher_ID}" class="btn btn-danger">Delete</a>
+                    <a href="http://localhost/CAMS/index.php/removeTeacher/${row.Teacher_ID}" onclick="return confirm('Are you sure you want to delete this teacher?')" class="btn btn-danger">Delete</a>
                 `;
             }
         }

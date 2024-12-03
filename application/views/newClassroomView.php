@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container pt-2">
 <h1 class="text-center">Add New Classroom</h1>
         <form id="myForm" action="<?php echo site_url('insertClassroom'); ?>" method="POST">
             <div class="form-group">

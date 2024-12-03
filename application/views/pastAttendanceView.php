@@ -1,4 +1,4 @@
-<div class="container mt-2">
+<div class="container pt-2">
     <h1 class="text-center">Past's Attendance</h1>
     <div class="form-group">
         <label for="past_date">Select a Date:</label>

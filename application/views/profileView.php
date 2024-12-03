@@ -1,4 +1,4 @@
-<div class="container mt-2">
+<div class="container pt-2">
     <?php if ($this->session->flashdata('message')) : ?>
         <?php
             $message = $this->session->flashdata('message');
