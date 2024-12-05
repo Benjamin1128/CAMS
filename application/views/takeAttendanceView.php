@@ -56,7 +56,7 @@
                                         echo 'badge-other';
                                     } 
                                     ?>">
-                                <?php echo htmlspecialchars($attendance['Attendance_Status'])?>
+                                <?php echo htmlspecialchars($attendance['Attendance_Status']) ? htmlspecialchars($attendance['Attendance_Status'])  : 'No Status'; ?>
                             </span>
                         </td>
                         <td>
