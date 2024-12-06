@@ -3,7 +3,7 @@
         <form id="myForm" action="<?php echo site_url('insertClassroom'); ?>" method="POST">
             <div class="form-group">
                 <label for="class_subject">Class Subject:</label>
-                <select id="class_subject" class="form-control">
+                <select name="class_subject" id="class_subject" class="form-control">
                     <option value="">Select a subject</option>
                 </select>
             </div>
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
     endTimeInput.addEventListener('change', validateTimes);
 });
 document.getElementById('myForm').addEventListener('submit', function(event) {
-    var subjectField = document.getElementById('class_subject');
+    var subjectField = document.getElementById('class_subject').value;
     var subject = subjectField.value.trim();
     if (subject.value === "") {
         alert("Please select a class subject.");
