@@ -171,7 +171,7 @@
                         <canvas id="attendanceChart"></canvas>
                     </div>
                     <div style="margin-bottom: 5%;"></div>
-                    <h3>Stduent Attedance Records</h3>
+                    <h3>Student Attedance Records</h3>
                     <canvas id="barChart"></canvas>
                 </div>
             </div>
