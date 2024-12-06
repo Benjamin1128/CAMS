@@ -3,7 +3,9 @@
         <form id="myForm" action="<?php echo site_url('insertClassroom'); ?>" method="POST">
             <div class="form-group">
                 <label for="class_subject">Class Subject:</label>
-                <input type="text" class="form-control" id="class_subject" name="class_subject" required>
+                <select id="class_subject" class="form-control">
+                    <option value="">Select a subject</option>
+                </select>
             </div>
 			<div class="form-group">
 				<label for="class_StartTime">Class Begin Time:</label>
@@ -49,6 +51,21 @@
         </form>
 </div>
 <script>
+
+
+fetch ('http://localhost/CAMS/class_subject.json')
+    .then(response => response.json())
+    .then(data => {
+        const select = document.getElementById('class_subject')
+        data.subjects.forEach(subject => {
+            const option = document.createElement('option')
+            option.value = subject;
+            option.textContent = subject;
+            select.appendChild(option);
+        })
+    })
+    .catch (error => console.error("Error fetching class subjects:", error));
+
 document.addEventListener('DOMContentLoaded', function() {
     var selectAllCheckbox = document.getElementById('select-all');
     var studentCheckboxes = document.querySelectorAll('input[name="students[]"]');
@@ -86,8 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('myForm').addEventListener('submit', function(event) {
     var subjectField = document.getElementById('class_subject');
     var subject = subjectField.value.trim();
-    if (subject === "") {
-        alert("Please enter a valid value. Blank spaces are not allowed.");
+    if (subject.value === "") {
+        alert("Please select a class subject.");
         subjectField.focus();
         event.preventDefault();
         return;
